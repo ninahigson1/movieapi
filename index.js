@@ -14,8 +14,31 @@ app.use(express.json());
 
 app.engine('.hbs', engine({extname: '.hbs'}));
 app.set('view engine', 'hbs');
-app.set('views', './views');
+app.set('home', './views');
 
-app.listen(3000, () => {
-    console.log('app listening on http://localhost:3000');
+app.get('/home', async (req, res) => {
+    let data = await fetch('https://api.themoviedb.org/3/movie/upcoming?api_key=64f6192caf236420f5fed7018238a8a5');
+    // console.log(await data.json());
+    res.render('home', {data});
+    data = await data.json();
+    
+    let obj = {
+    title: data.original_title,
+    img: data.poster_path
+    }
+    
+    res.render('home', obj);
 });
+
+
+app.get('*', (req, res) => {
+    res.render('404');
+
+});
+
+
+app.listen(4000, () => {
+    console.log('app listening on http://localhost:4000');
+});
+
+
